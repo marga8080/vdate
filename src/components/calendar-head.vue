@@ -83,8 +83,9 @@
         position: absolute;
         top: 0;
         right: 10px;
-        width: 50px;
-        height: 30px;
+        width: 46px;
+        height: 26px;
+        line-height: 26px;
         text-align: center;
         border: 1px solid #2061FF;
         border-radius: 4px;

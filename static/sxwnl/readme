@@ -1,0 +1,9 @@
+<script language=javascript src=tools.js></script><!--工具函数-->
+<script language=javascript src=eph0.js></script> <!--天文常数等-->
+<script language=javascript src=ephB.js></script> <!--恒星计算(如果不须要恒星,删除此行)-->
+<script language=javascript src=eph.js></script>  <!--星历模块-->
+<script language=javascript src=JW.js></script>   <!--全国城市经纬数据库及皇帝纪年数据库-->
+<script language=javascript src=lunar.js></script><!--日历物件-->
+<script language=javascript src=vml.js></script>  <!--画图物件-->
+<script language=javascript src=help.js></script> <!--即时帮助-->
+<script language=javascript src=page_gj.js></script> <!--工具页面函数-->

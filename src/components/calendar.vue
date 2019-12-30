@@ -24,7 +24,7 @@
         ]"
           @click="handleClickDay(item)"
       >
-        <span class="date-day"
+        <div class="date-day"
               :style="dayStyle"
               :class="[
               {'opacity-class': !isCurrentMonth(item.date)},
@@ -32,7 +32,10 @@
               ]"
         >
           {{item.day}}
-        </span>
+          <div class="lun-class">
+            {{item.lund}}
+          </div>
+        </div>
       </li>
     </ul>
   </div>
@@ -51,7 +54,7 @@
     data() {
       let {year, month, day} = this.getNewDate(new Date());
       return {
-        weekStart: 0, // 一周的第一天 0标识周日
+        weekStart: 1, // 一周的第一天 0标识周日
         weeks,
         headTile: '',
         time: {year, month, day},
@@ -83,16 +86,49 @@
         if (monthDayNum % 7 !== 0) { // 除不尽则追加下个月几天
           monthDayNum += 7 - (monthDayNum % 7)
         }
-
+        const lun = new Lunar();
+        lun.yueLiCalc(year, month + 1);
         let calendatArr = [];
         for (let i = 0; i < monthDayNum; i++) {
-          calendatArr.push({
-            date: new Date(startTime + i * 24 * 60 * 60 * 1000),
+          let date = new Date(startTime + i * 24 * 60 * 60 * 1000);
+          let data = {
+            date,
             year: year,
             month: month + 1,
-            day: new Date(startTime + i * 24 * 60 * 60 * 1000).getDate(),
+            day: date.getDate(),
             clickDay: false,
-          })
+          };
+          if (i - st >= 0 && i - st < allday) {
+            let ob = lun.lun[i - st];
+            data.lun = ob;
+            let c = '';
+            // if(ob.A) {
+            //   c += this.substr2(ob.A, 4, '');
+            // }
+            // if(!c && ob.B && ob.B.indexOf("『") !== 0) {
+            //   c = this.substr2(ob.B,2,'');
+            //   console.log(ob.B)
+            // }
+            if(!c && ob.Ldc==="初一") {//农历历月(闰月及大小等)
+              //(ob.Ldn==30?'大':'小')
+              let m = ob.Lmc;
+              if (ob.Lmc === '十一') {
+                m = '冬'
+              } else if (ob.Lmc === '十二') {
+                m = '腊';
+              }
+              c = ob.Lleap + m +'月';
+            }
+            if(!c) {
+              c = ob.Ldc;
+            } //取农历
+            data.lund = c;
+          } else {
+            data.lun = {};
+            data.lund = '';
+          }
+          //console.log(data.lun)
+          calendatArr.push(data)
         }
         this.headTile = this.formatHeadTitle(this.time);
         return calendatArr
@@ -175,10 +211,18 @@
       getDate(year, month, day) {
         return new Date(year, month, day);
       },
-
-
+      //截串(网页设计对过长的文字做截处理)
+      substr2(s,n,end){
+        s=s.replace(/(^\s*)|(\s*$)/g, "");
+        if(s.length > n + 1) {
+          return s.substr(0, n);
+        }
+        return s;
+      },
       formatHeadTitle(d) {
-        return `${d.year}年${d.month}月`;
+        console.log(d.month)
+        let month = d.month + 1;
+        return `${d.year}年${month}月`;
       }
 
     },
@@ -188,6 +232,7 @@
       for (let i = this.weekStart; i < this.weekStart + 7; i++) {
         this.calendarTitleList.push(weeks[i % 7]);
       }
+
     }
   }
 </script>
@@ -249,6 +294,9 @@
           width: 100%;
           font-size: 16px;
           color: #7F8794;
+          .lun-class {
+            font-size: 12px;
+          }
         }
         .calendar-num {
           margin-top: 6px;
@@ -261,6 +309,7 @@
         .weekend-class {
           color: red;
         }
+
       }
       .opacity-class {
         opacity: .5;
@@ -277,6 +326,7 @@
         background: #2061FF !important;
         .date-day {
           color: #BCCFFF !important;
+
         }
         .calendar-num {
           color: #fff !important;
