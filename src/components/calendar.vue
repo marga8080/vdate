@@ -89,7 +89,7 @@
         const lun = new Lunar();
         lun.yueLiCalc(year, month + 1);
         let calendatArr = [];
-        let todate = this.getNewDate(new Date());
+        let {month: currentMonth, day: currentDay} = this.getNewDate(new Date());
         for (let i = 0; i < monthDayNum; i++) {
           let date = new Date(startTime + i * 24 * 60 * 60 * 1000);
           let data = {
@@ -97,8 +97,13 @@
             year: year,
             month: month + 1,
             day: date.getDate(),
-            clickDay: date.getDate() === todate.day && date.getMonth() === todate.month,
+            clickDay: false,
           };
+          if (month === currentMonth) {
+            data.clickDay = date.getDate() === currentDay;
+          } else {
+            data.clickDay = i - st === 0;
+          }
           if (i - st >= 0 && i - st < allday) {
             let ob = lun.lun[i - st];
             data.lun = ob;
