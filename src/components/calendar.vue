@@ -54,7 +54,7 @@
     data() {
       let {year, month, day} = this.getNewDate(new Date());
       return {
-        weekStart: 1, // 一周的第一天 0标识周日
+        weekStart: 0, // 一周的第一天 0标识周日
         weeks,
         headTile: '',
         time: {year, month, day},
@@ -81,7 +81,7 @@
         }
         let startTime = currentFirstDay - st * 24 * 60 * 60 * 1000;
         //当前天数
-        let allday = this.getDays(year, month);
+        let allday = this.getDays(year, month + 1);
         let monthDayNum = allday + st; // 加上 上个月显示的天数
         if (monthDayNum % 7 !== 0) { // 除不尽则追加下个月几天
           monthDayNum += 7 - (monthDayNum % 7)
@@ -89,6 +89,7 @@
         const lun = new Lunar();
         lun.yueLiCalc(year, month + 1);
         let calendatArr = [];
+        let todate = this.getNewDate(new Date());
         for (let i = 0; i < monthDayNum; i++) {
           let date = new Date(startTime + i * 24 * 60 * 60 * 1000);
           let data = {
@@ -96,7 +97,7 @@
             year: year,
             month: month + 1,
             day: date.getDate(),
-            clickDay: false,
+            clickDay: date.getDate() === todate.day && date.getMonth() === todate.month,
           };
           if (i - st >= 0 && i - st < allday) {
             let ob = lun.lun[i - st];
@@ -109,6 +110,12 @@
             //   c = this.substr2(ob.B,2,'');
             //   console.log(ob.B)
             // }
+            if (ob.B) {
+              let jq = this.substr2(ob.B,2,'');
+              if (obb.jqmc.indexOf(jq) !== -1) {
+                c = jq;
+              }
+            }
             if(!c && ob.Ldc==="初一") {//农历历月(闰月及大小等)
               //(ob.Ldn==30?'大':'小')
               let m = ob.Lmc;
@@ -131,6 +138,7 @@
           calendatArr.push(data)
         }
         this.headTile = this.formatHeadTitle(this.time);
+        this.calendarList = calendatArr;
         return calendatArr
       }
     },
@@ -220,14 +228,12 @@
         return s;
       },
       formatHeadTitle(d) {
-        console.log(d.month)
         let month = d.month + 1;
         return `${d.year}年${month}月`;
       }
 
     },
     created() {
-      this.calendarList = this.visibleCalendar;
       this.calendarTitleList = [];
       for (let i = this.weekStart; i < this.weekStart + 7; i++) {
         this.calendarTitleList.push(weeks[i % 7]);
@@ -274,7 +280,7 @@
         color: #424953;
         border-right: 1px solid #E4E7EA;
         .weekend-class {
-          color: red;
+          color: #e02d2d;
         }
       }
     }
@@ -292,8 +298,8 @@
           padding: 8px 0;
           display: block;
           width: 100%;
-          font-size: 16px;
-          color: #7F8794;
+          font-size: 18px;
+          color: #424953;
           .lun-class {
             font-size: 12px;
           }
@@ -307,7 +313,7 @@
           color: #424953;
         }
         .weekend-class {
-          color: red;
+          color: #e02d2d;
         }
 
       }
@@ -319,18 +325,20 @@
         background-size: 20px 20px;
       }
       .todayBg {
-        background: #FFFDEF;
+        background: #DEB887;
         font-weight: bold;
-      }
-      .handleDay {
-        background: #2061FF !important;
         .date-day {
-          color: #BCCFFF !important;
-
-        }
-        .calendar-num {
           color: #fff !important;
         }
+      }
+      .todayBg.handleDay {
+        background: #FFBB00;
+      }
+      .todayBg.handleDay.opacity-class  {
+        background: #DEB887;
+      }
+      .handleDay {
+        border: 3px solid #FFBB00;
       }
     }
   }
