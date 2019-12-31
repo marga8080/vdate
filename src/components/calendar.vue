@@ -18,8 +18,8 @@
           :key="index"
           class="date-view"
           :class="[
-          {'month-class': !isCurrentMonth(item.date)},
-          {todayBg: isCurrentDay(item.date)},
+          {'month-class': !item.isCurrentMonth},
+          {todayBg: item.isCurrentDay},
           {handleDay: item.clickDay}
         ]"
           @click="handleClickDay(item)"
@@ -27,7 +27,7 @@
         <div class="date-day"
               :style="dayStyle"
               :class="[
-              {'opacity-class': !isCurrentMonth(item.date)},
+              {'opacity-class': !item.isCurrentMonth},
               {'weekend-class': isWeekend(item.date)}
               ]"
         >
@@ -81,32 +81,42 @@
         }
         let startTime = currentFirstDay - st * 24 * 60 * 60 * 1000;
         //当前天数
-        let allday = this.getDays(year, month + 1);
-        let monthDayNum = allday + st; // 加上 上个月显示的天数
+        let mdays = this.getDays(year, month + 1);
+        let monthDayNum = mdays + st; // 加上 上个月显示的天数
         if (monthDayNum % 7 !== 0) { // 除不尽则追加下个月几天
           monthDayNum += 7 - (monthDayNum % 7)
         }
         const lun = new Lunar();
         lun.yueLiCalc(year, month + 1);
-        let calendatArr = [];
-        let {month: currentMonth, day: currentDay} = this.getNewDate(new Date());
+        let calendarArr = [];
+        let {year: currentYear, month: currentMonth, day: currentDay} = this.getNewDate(new Date());
         for (let i = 0; i < monthDayNum; i++) {
           let date = new Date(startTime + i * 24 * 60 * 60 * 1000);
-          let data = {
+          let item = {
             date,
             year: year,
             month: month + 1,
             day: date.getDate(),
             clickDay: false,
+            isCurrentDay: false,
           };
-          if (month === currentMonth) {
-            data.clickDay = date.getDate() === currentDay;
+          if (month === currentMonth && year === currentYear) {
+            item.isCurrentDay = date.getDate() === currentDay;
+            item.clickDay = item.isCurrentDay;
           } else {
-            data.clickDay = i - st === 0;
+            item.clickDay = i - st === 0;
           }
-          if (i - st >= 0 && i - st < allday) {
+          if (i < st) {
+            item.curM = -1;
+          } else if (i >= st && i < mdays + st) {
+            item.curM = 0;
+          } else {
+            item.curM = 1;
+          }
+          item.isCurrentMonth = item.curM === 0;
+          if (i - st >= 0 && i - st < mdays) {
             let ob = lun.lun[i - st];
-            data.lun = ob;
+            item.lun = ob;
             let c = '';
             // if(ob.A) {
             //   c += this.substr2(ob.A, 4, '');
@@ -134,17 +144,17 @@
             if(!c) {
               c = ob.Ldc;
             } //取农历
-            data.lund = c;
+            item.lund = c;
           } else {
-            data.lun = {};
-            data.lund = '';
+            item.lun = {};
+            item.lund = '';
           }
           //console.log(data.lun)
-          calendatArr.push(data)
+          calendarArr.push(item)
         }
         this.headTile = this.formatHeadTitle(this.time);
-        this.calendarList = calendatArr;
-        return calendatArr
+        this.calendarList = calendarArr;
+        return calendarArr
       }
     },
     methods: {
@@ -208,6 +218,12 @@
       handleClickDay(item) {
         this.$forceUpdate();
         this.$emit('handleClickDay', item);
+        if (item.curM === -1) {
+          this.handlePrevMonth();
+        } else if (item.curM === 1) {
+          this.handleNextMonth();
+        }
+        console.log(this.calendarList[8].month, item.month)
         this.calendarList.map(x => {
           x.clickDay = false;
         });
