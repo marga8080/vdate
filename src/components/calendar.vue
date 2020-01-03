@@ -60,6 +60,7 @@
         time: {year, month, day},
         calendarList: [],
         calendarTitleList: [],
+        clickItem: null,
       }
     },
 
@@ -105,6 +106,9 @@
             item.clickDay = item.isCurrentDay;
           } else {
             item.clickDay = i - st === 0;
+          }
+          if (this.clickItem) {
+            item.clickDay = date.getDate() === this.clickItem.day && date.getMonth() === this.clickItem.date.getMonth();
           }
           if (i < st) {
             item.curM = -1;
@@ -195,6 +199,7 @@
       },
       // 上一个月
       handlePrevMonth() {
+        this.clickItem = null;
         let prevMonth = this.getDate(this.time.year, this.time.month, 1);
         prevMonth.setMonth(prevMonth.getMonth() - 1);
         this.time = this.getNewDate(prevMonth);
@@ -203,6 +208,7 @@
       },
       // 下一个月
       handleNextMonth() {
+        this.clickItem = null;
         let nextMonth = this.getDate(this.time.year, this.time.month, 1);
         nextMonth.setMonth(nextMonth.getMonth() + 1);
         this.time = this.getNewDate(nextMonth);
@@ -211,6 +217,7 @@
       },
       // 点击回到今天
       handleToday() {
+        this.clickItem = null;
         this.time = this.getNewDate(new Date());
         this.$emit('handleToday');
       },
@@ -223,11 +230,13 @@
         } else if (item.curM === 1) {
           this.handleNextMonth();
         }
-        console.log(this.calendarList[8].month, item.month)
         this.calendarList.map(x => {
           x.clickDay = false;
         });
         this.$set(item, 'clickDay', true);
+        if (item.curM !== 0) {
+          this.clickItem = item;
+        }
       },
 
       getNewDate(date) {
