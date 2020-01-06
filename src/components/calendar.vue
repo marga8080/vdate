@@ -123,7 +123,7 @@
           if (i - st >= 0 && i - st < mdays) {
             let ob = this.lun.lun[i - st];
             item.lun = ob;
-            let c = '';
+            let c = ob.jqmc;
             // if(ob.A) {
             //   c += this.substr2(ob.A, 4, '');
             // }
@@ -131,12 +131,6 @@
             //   c = this.substr2(ob.B,2,'');
             //   console.log(ob.B)
             // }
-            if (ob.B) {
-              let jq = this.substr2(ob.B,2,'');
-              if (obb.jqmc.indexOf(jq) !== -1) {
-                c = jq;
-              }
-            }
             if(!c && ob.Ldc==="初一") {//农历历月(闰月及大小等)
               //(ob.Ldn==30?'大':'小')
               let m = ob.Lmc;
