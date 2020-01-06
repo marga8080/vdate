@@ -61,6 +61,7 @@
         calendarList: [],
         calendarTitleList: [],
         clickItem: null,
+        selItem: null, // 当前选中的item
       }
     },
 
@@ -87,8 +88,8 @@
         if (monthDayNum % 7 !== 0) { // 除不尽则追加下个月几天
           monthDayNum += 7 - (monthDayNum % 7)
         }
-        const lun = new Lunar();
-        lun.yueLiCalc(year, month + 1);
+
+        this.lun.yueLiCalc(year, month + 1);
         let calendarArr = [];
         let {year: currentYear, month: currentMonth, day: currentDay} = this.getNewDate(new Date());
         for (let i = 0; i < monthDayNum; i++) {
@@ -101,6 +102,7 @@
             clickDay: false,
             isCurrentDay: false,
           };
+          // 设置选中日期
           if (month === currentMonth && year === currentYear) {
             item.isCurrentDay = date.getDate() === currentDay;
             item.clickDay = item.isCurrentDay;
@@ -119,7 +121,7 @@
           }
           item.isCurrentMonth = item.curM === 0;
           if (i - st >= 0 && i - st < mdays) {
-            let ob = lun.lun[i - st];
+            let ob = this.lun.lun[i - st];
             item.lun = ob;
             let c = '';
             // if(ob.A) {
@@ -152,6 +154,9 @@
           } else {
             item.lun = {};
             item.lund = '';
+          }
+          if (item.clickDay) {
+            this.setCurSelItem(item);
           }
           //console.log(data.lun)
           calendarArr.push(item)
@@ -239,6 +244,10 @@
         }
       },
 
+      setCurSelItem(item) {
+        this.$emit('handleClickDay', item);
+      },
+
       getNewDate(date) {
         let year = date.getFullYear();
         let month = date.getMonth();
@@ -264,6 +273,7 @@
 
     },
     created() {
+      this.lun = new Lunar();
       this.calendarTitleList = [];
       for (let i = this.weekStart; i < this.weekStart + 7; i++) {
         this.calendarTitleList.push(weeks[i % 7]);
