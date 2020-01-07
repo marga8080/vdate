@@ -293,8 +293,8 @@
       for (let i = this.weekStart; i < this.weekStart + 7; i++) {
         this.calendarTitleList.push(weeks[i % 7]);
       }
-      this.holiday = holiday();
-      this.hworkday = hworkday();
+      this.holiday = config.holiday;
+      this.hworkday = config.hworkday;
     }
   }
 </script>

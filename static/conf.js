@@ -1,3 +1,10 @@
+var config = {
+  holiday: getHoliday(), // 放假日期
+  hworkday: getHworkday(), // 调班日期
+}
+
+
+
 /**
  *   2020年节日放假安排时间日历表：对比2019年
  *　　一、元旦放假安排：1月1日放假	无调休 共1天。
@@ -10,7 +17,7 @@
  */
 
 // 放假日期
-var holiday = function () {
+function getHoliday() {
   var day = [];
   day.push(20200101); //元旦
   for (var i = 0; i < 7; i++) { //春节
@@ -32,6 +39,6 @@ var holiday = function () {
 }
 
 // 调班日期
-var hworkday = function () {
+function getHworkday() {
   return [20200119, 20200201, 20200426, 20200509, 20200628, 20200927, 20201010];
 }
