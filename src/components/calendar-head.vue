@@ -1,6 +1,9 @@
 <template>
   <div class="calendar-header clear">
     <div class="calendar-box">
+      <span class="drawer" @click="handleMenu()">
+        三
+      </span>
       <div class="calendar-content" :style="{'text-align': 'combination'}">
         <span class="calendar-prev" @click="handlePrevMonth"><</span>
         <span class="calendar-headDate">{{this.headTile}}</span>
@@ -33,6 +36,10 @@
       // 回到今天
       handleToday() {
         this.$emit('handleToday');
+      },
+      // 菜单
+      handleMenu() {
+        this.$emit('handleMenu');
       }
     }
   }
@@ -92,6 +99,16 @@
         font-size: 14px;
         color: #2061FF;
         cursor: pointer;
+      }
+      .drawer {
+        position: absolute;
+        top: 0;
+        left: 10px;
+        cursor: pointer;
+        width: 30px;
+        height: 26px;
+        line-height: 26px;
+        text-align: center;
       }
       .dispersion-today {
         position: inherit;

@@ -38,7 +38,7 @@
           return {};
         }
         let ob = this.item.lun;
-        console.log(ob)
+        //console.log(ob)
         let m = ob.Lmc;
         if (ob.Lmc === '十一') {
           m = '冬'

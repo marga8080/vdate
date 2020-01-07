@@ -5,6 +5,7 @@
       @handlePrevMonth='handlePrevMonth'
       @handleNextMonth='handleNextMonth'
       @handleToday='handleToday'
+      @handleMenu="handleMenu"
     />
     <ul class="calendar-week clear">
       <li v-for="(item, index) in calendarTitleList" :key="index" class="week-item" >
@@ -251,6 +252,10 @@
 
       setCurSelItem(item) {
         this.$emit('handleClickDay', item);
+      },
+      // 菜单
+      handleMenu() {
+        this.$emit('handleMenu');
       },
 
       getNewDate(date) {
