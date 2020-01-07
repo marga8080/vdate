@@ -38,6 +38,7 @@
           return {};
         }
         let ob = this.item.lun;
+        console.log(ob)
         let m = ob.Lmc;
         if (ob.Lmc === '十一') {
           m = '冬'
@@ -45,7 +46,7 @@
           m = '腊';
         }
         model.lmd = ob.Lleap + m + "月" + ob.Ldc; // 农历
-        model.shx = '属' + obb.ShX[(ob.y -1984 + 12000)%12];
+        model.shx = '属' + obb.ShX[ obb.Zhi.indexOf(ob.Lyear3.substr(1))];
         model.gzr = ob.Lyear3 + '年 '+ ob.Lmonth2 + '月 ' + ob.Lday2 + '日'; // 农历干支
         model.ymd = Ayear2year(ob.y) + '年' + ob.m + '月' + ob.d + '日' + '  星期' + JD.Weeks[ob.week]; // 公历年月日
         model.xiz = ob.XiZ;
@@ -78,12 +79,12 @@
     .xiz {
       position: absolute;
       top: 0;
-      right: 5px;
+      right: 0px;
       font-size: 14px;
-      border: 1px solid lightcoral;
+      border: 1px solid darkred;
       padding: 1px 4px;
       border-radius: 4px;
-      color: lightcoral;
+      color: darkred;
     }
   }
 

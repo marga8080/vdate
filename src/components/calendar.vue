@@ -31,6 +31,7 @@
               {'weekend-class': isWeekend(item.date)}
               ]"
         >
+          <span :class="[{'holiday-class': item.isHoliday},{'hworkday-class': item.isHworkday}]"></span>
           {{item.day}}
           <div class="lun-class">
             {{item.lund}}
@@ -62,6 +63,8 @@
         calendarTitleList: [],
         clickItem: null,
         selItem: null, // 当前选中的item
+        holiday: [],
+        hworkday: [],
       }
     },
 
@@ -151,6 +154,14 @@
           }
           if (item.clickDay) {
             this.setCurSelItem(item);
+          }
+          // 判断放假和调休
+          let fmtd = this.formaDate(date);
+          if (this.holiday.indexOf(fmtd * 1) !== -1) {
+            item.isHoliday = true;
+          }
+          if (this.hworkday.indexOf(fmtd * 1) !== -1) {
+            item.isHworkday = true;
           }
           //console.log(data.lun)
           calendarArr.push(item)
@@ -263,8 +274,13 @@
       formatHeadTitle(d) {
         let month = d.month + 1;
         return `${d.year}年${month}月`;
-      }
-
+      },
+      formaDate(date) {
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        return year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+      },
     },
     created() {
       this.lun = new Lunar();
@@ -272,7 +288,8 @@
       for (let i = this.weekStart; i < this.weekStart + 7; i++) {
         this.calendarTitleList.push(weeks[i % 7]);
       }
-
+      this.holiday = holiday();
+      this.hworkday = hworkday();
     }
   }
 </script>
@@ -329,6 +346,7 @@
         border-bottom: 1px solid #E4E7EA;
         cursor: pointer;
         .date-day {
+          position: relative;
           padding: 8px 0;
           display: block;
           width: 100%;
@@ -349,7 +367,40 @@
         .weekend-class {
           color: #e02d2d;
         }
-
+        .holiday-class {
+          position: absolute;
+          right: 2px;
+          top: 2px;
+          display: block;
+          width: 15px;
+          height: 15px;
+          text-align: center;
+          text-indent: 1px;
+          line-height: 15px;
+          overflow: hidden;
+          color: #009900;
+          font-size: 10px;
+        }
+        .holiday-class:after {
+          content: '假';
+        }
+        .hworkday-class {
+          position: absolute;
+          right: 2px;
+          top: 2px;
+          display: block;
+          width: 15px;
+          height: 15px;
+          color: red;
+          text-align: center;
+          text-indent: 1px;
+          line-height: 15px;
+          overflow: hidden;
+          font-size: 10px;
+        }
+        .hworkday-class:after {
+          content: '班';
+        }
       }
       .opacity-class {
         opacity: .5;
